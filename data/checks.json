@@ -1,0 +1,13 @@
+[
+ {
+  "checked_at": "2026-10-27T14:10:00+08:00",
+  "trading_date": "2026-10-26",
+  "close": 4.23,
+  "change_pct": 0.0575,
+  "new_announcements": 10,
+  "new_shareholding": 7,
+  "alert": "Yes",
+  "status": "Setup",
+  "note": "Initial load: last 10 announcements and the 23\u201326 Oct closes. Automatic daily checks start this evening."
+ }
+]

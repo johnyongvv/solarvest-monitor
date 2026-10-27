@@ -1,0 +1,22 @@
+[
+ {
+  "date": "2026-10-23",
+  "close": 4.0,
+  "prev_close": null,
+  "change": null,
+  "change_pct": null,
+  "volume": null,
+  "alert": "",
+  "basis": "End-of-day; KLSE Screener, cross-checked with Investing.com; not an exchange-certified feed"
+ },
+ {
+  "date": "2026-10-26",
+  "close": 4.23,
+  "prev_close": 4.0,
+  "change": 0.23,
+  "change_pct": 0.0575,
+  "volume": 9596300,
+  "alert": "Yes",
+  "basis": "End-of-day; KLSE Screener, cross-checked with Investing.com; not an exchange-certified feed"
+ }
+]

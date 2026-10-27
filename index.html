@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solarvest Bursa Monitor</title>
+<meta name="description" content="Daily log of Solarvest Holdings (Bursa: 0215) announcements and closing prices.">
+<style>
+:root{--bg:#f7f6f2;--panel:#fff;--fg:#1d1d1b;--muted:#6b6a65;--line:#e4e2db;--accent:#2f5d8a;--bad:#b3261e;--ok:#2e7d32;--hl:#fdf3dc}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--panel:#1f1f1d;--fg:#ecebe6;--muted:#a3a19a;--line:#33322f;--accent:#7fb0e0;--bad:#f2867d;--ok:#7fcf86;--hl:#3a321f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 48px;display:flex;flex-direction:column;gap:20px}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:28px;margin:0}
+.take{color:var(--muted);margin:4px 0 0}
+.upd{color:var(--muted);font-size:12px;margin-top:4px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.lbl{font-size:12px;color:var(--muted)}
+.big{font-family:Georgia,"Times New Roman",serif;font-size:28px;font-variant-numeric:tabular-nums;margin-top:4px}
+.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.up{color:var(--ok)}.down{color:var(--bad)}
+h2{font-size:16px;font-weight:600;margin:0}
+.note{font-size:12px;color:var(--muted);margin:4px 0 12px}
+.chart{position:relative;min-height:220px}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:6px 10px;font-size:12px;white-space:nowrap;display:none}
+.tip .d{color:var(--muted)}
+.scroll{max-height:28rem;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;background:var(--panel);text-align:left;font-weight:600;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.n{text-align:right}
+tr.hl td{background:var(--hl)}
+a{color:var(--accent)}
+.flag{color:var(--bad);font-weight:600}
+.foot{font-size:12px;color:var(--muted)}
+.err{color:var(--bad);font-size:13px}
+@media (max-width:640px){.hide{display:none}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Solarvest (0215) — Bursa monitor</h1>
+    <p class="take" id="take">Loading…</p>
+    <div class="upd" id="upd"></div>
+  </header>
+
+  <section class="tiles">
+    <div class="card"><div class="lbl">Latest close (RM)</div><div class="big" id="close">—</div><div class="sub" id="closeDate"></div></div>
+    <div class="card"><div class="lbl">Change vs previous close</div><div class="big" id="chg">—</div><div class="sub">Alert at ±5%</div></div>
+    <div class="card"><div class="lbl">Shareholding notices, last 30 days</div><div class="big" id="n30">—</div><div class="sub">Substantial-shareholder and director filings</div></div>
+    <div class="card"><div class="lbl">Last automatic check</div><div class="big" id="last">—</div><div class="sub" id="lastStatus"></div></div>
+  </section>
+
+  <section class="card">
+    <h2>Daily close</h2>
+    <p class="note">End-of-day closes in RM. Red dots are closes that moved 5% or more from the previous close.</p>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+  </section>
+
+  <section class="card">
+    <h2>Daily monitoring log</h2>
+    <p class="note">One row per automatic check, added each trading evening.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Checked</th><th>Trading day</th><th class="n">Close</th><th class="n">Change</th><th class="n">New filings</th><th class="n">Shareholding</th><th>Alert</th><th>Status</th><th class="hide">Note</th></tr></thead>
+      <tbody id="checks"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Bursa announcements</h2>
+    <p class="note">Newest first. Shareholding filings are highlighted. Titles link to the filing.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Date</th><th class="hide">Time</th><th>Category</th><th>Announcement</th><th>Filed by / person</th></tr></thead>
+      <tbody id="ann"></tbody>
+    </table></div>
+  </section>
+
+  <p class="foot">Prices are end-of-day closes from market-data services (KLSE Screener, cross-checked with Investing.com), not an exchange-certified feed. Announcements are as listed on KLSE Screener; the Bursa Malaysia filing is the primary reference. This log records filings and price moves as dated facts only; it does not attribute causes or interpret shareholder intentions. Updated automatically each weekday evening.</p>
+</div>
+
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const day = (s) => { if (!s) return '—'; const [y,m,d] = String(s).slice(0,10).split('-').map(Number); return `${d} ${MON[m-1]} ${y}`; };
+  const short = (s) => { const [,m,d] = String(s).slice(0,10).split('-').map(Number); return `${d} ${MON[m-1]}`; };
+  const has = (v) => v !== null && v !== undefined && v !== '';
+  const rm = (v) => has(v) ? Number(v).toFixed(2) : '—';
+  const pct = (v) => has(v) ? (v > 0 ? '+' : '') + (Number(v) * 100).toFixed(2) + '%' : '—';
+  const num = (v) => has(v) ? Number(v).toLocaleString('en-GB') : '—';
+  const ts = (s) => { const d = new Date(s); return isNaN(d) ? String(s) : d.toLocaleString('en-GB', {timeZone:'Asia/Kuala_Lumpur', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}); };
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+
+  let prices, ann, checks;
+  try {
+    const get = (f) => fetch(`data/${f}.json?v=${Date.now()}`, {cache:'no-store'}).then((r) => { if (!r.ok) throw new Error(f); return r.json(); });
+    [prices, ann, checks] = await Promise.all([get('prices'), get('announcements'), get('checks')]);
+  } catch (e) {
+    $('take').textContent = 'The data could not be loaded. Please refresh in a moment.'; $('take').className = 'take err'; return;
+  }
+
+  const P = prices.filter((r) => has(r.close)).sort((a,b) => a.date < b.date ? -1 : 1);
+  const C = checks.slice().sort((a,b) => a.checked_at < b.checked_at ? 1 : -1);
+  const A = ann.slice().sort((a,b) => (a.date + a.time) < (b.date + b.time) ? 1 : -1);
+  const lp = P[P.length - 1], lc = C[0];
+
+  if (lp) {
+    $('close').textContent = rm(lp.close); $('closeDate').textContent = day(lp.date);
+    $('chg').textContent = pct(lp.change_pct);
+    $('chg').className = 'big ' + (lp.change_pct > 0 ? 'up' : lp.change_pct < 0 ? 'down' : '');
+  }
+  if (lc) {
+    $('last').textContent = ts(lc.checked_at);
+    $('lastStatus').textContent = (lc.status || '') + (lc.alert === 'Yes' ? ' — alert raised' : '');
+    $('upd').textContent = 'Last updated ' + ts(lc.checked_at) + ' (Malaysia time)';
+    const from = new Date(Date.parse(String(lc.checked_at).slice(0,10)) - 30 * 864e5).toISOString().slice(0,10);
+    const to = String(lc.checked_at).slice(0,10);
+    $('n30').textContent = num(ann.filter((a) => a.shareholding === 'Yes' && a.date >= from && a.date <= to).length);
+  }
+  $('take').textContent = [
+    lp && lp.alert === 'Yes' ? 'Latest close crossed the ±5% alert level.' : 'Latest close is within the ±5% alert level.',
+    lc && Number(lc.new_shareholding) > 0 ? 'The last check found new shareholding filings — see below.' : 'No new shareholding filings at the last check.'
+  ].join(' ');
+
+  // Checks table
+  $('checks').replaceChildren(...C.map((r) => {
+    const tr = el('tr'); if (r.alert === 'Yes') tr.className = 'hl';
+    tr.append(el('td', ts(r.checked_at)), el('td', day(r.trading_date)), el('td', rm(r.close), 'n'), el('td', pct(r.change_pct), 'n'),
+      el('td', num(r.new_announcements), 'n'), el('td', num(r.new_shareholding), 'n'),
+      el('td', r.alert || 'No', r.alert === 'Yes' ? 'flag' : ''), el('td', r.status || ''), el('td', r.note || '', 'hide'));
+    return tr;
+  }));
+
+  // Announcements table
+  $('ann').replaceChildren(...A.map((r) => {
+    const tr = el('tr'); if (r.shareholding === 'Yes') tr.className = 'hl';
+    const t = el('td');
+    if (/^https:\/\//.test(r.url || '')) { const a = el('a', r.title); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; t.append(a); } else t.textContent = r.title;
+    tr.append(el('td', day(r.date)), el('td', r.time || '', 'hide'), el('td', r.category || ''), t, el('td', r.filer || '—'));
+    return tr;
+  }));
+
+  // Chart (plain SVG)
+  const box = $('chart'), tip = $('tip'), NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  function draw() {
+    box.querySelectorAll('svg').forEach((s) => s.remove());
+    if (!P.length) return;
+    const W = Math.max(box.clientWidth, 280), H = 220, L = 46, R = 16, T = 10, B = 26;
+    const vals = P.map((d) => Number(d.close));
+    let lo = Math.min(...vals), hi = Math.max(...vals); const pad = Math.max((hi - lo) * 0.15, 0.05); lo -= pad; hi += pad;
+    const y = (v) => T + (hi - v) / (hi - lo) * (H - T - B);
+    const x = (i) => P.length === 1 ? (L + W - R) / 2 : L + 12 + i * (W - L - R - 12) / (P.length - 1);
+    const svg = mk('svg', {viewBox:`0 0 ${W} ${H}`, width:'100%'}); svg.style.display = 'block';
+    for (let k = 0; k <= 4; k++) {
+      const v = lo + (hi - lo) * k / 4, yy = y(v);
+      svg.append(mk('line', {x1:L, x2:W - 8, y1:yy, y2:yy, stroke:'var(--line)'}));
+      const t = mk('text', {x:L - 6, y:yy + 4, 'text-anchor':'end', fill:'var(--muted)', 'font-size':11}); t.textContent = v.toFixed(2); svg.append(t);
+    }
+    const step = Math.ceil(P.length / Math.max(2, Math.floor((W - L) / 70)));
+    P.forEach((d, i) => { if (i % step === 0 || i === P.length - 1) { const t = mk('text', {x:x(i), y:H - 6, 'text-anchor':'middle', fill:'var(--muted)', 'font-size':11}); t.textContent = short(d.date); svg.append(t); } });
+    svg.append(mk('polyline', {points:P.map((d, i) => `${x(i)},${y(d.close)}`).join(' '), fill:'none', stroke:'var(--accent)', 'stroke-width':2, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+    P.forEach((d, i) => {
+      const c = mk('circle', {cx:x(i), cy:y(d.close), r:d.alert === 'Yes' ? 5 : 3, fill:d.alert === 'Yes' ? 'var(--bad)' : 'var(--accent)'});
+      c.addEventListener('mouseenter', () => {
+        tip.replaceChildren(el('div', day(d.date), 'd'), el('div', `Close RM${rm(d.close)}  ${pct(d.change_pct)}`), el('div', 'Volume ' + num(d.volume)));
+        tip.style.display = 'block';
+        const px = x(i) / W * box.clientWidth, py = y(d.close) / H * box.clientHeight;
+        tip.style.left = Math.min(Math.max(px - tip.offsetWidth / 2, 0), box.clientWidth - tip.offsetWidth) + 'px';
+        tip.style.top = Math.max(py - tip.offsetHeight - 10, 0) + 'px';
+      });
+      c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+      svg.append(c);
+    });
+    box.append(svg);
+  }
+  draw(); let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 150); });
+})();
+</script>
+</body>
+</html>
