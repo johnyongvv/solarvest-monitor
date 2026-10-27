@@ -61,9 +61,9 @@ a{color:var(--accent)}
 
   <section class="card">
     <h2>Daily monitoring log</h2>
-    <p class="note">One row per automatic check, added each trading evening.</p>
+    <p class="note">One row per automatic check: hourly during trading hours (Intraday, last traded price) and each evening (official close).</p>
     <div class="scroll"><table>
-      <thead><tr><th>Checked</th><th>Trading day</th><th class="n">Close</th><th class="n">Change</th><th class="n">New filings</th><th class="n">Shareholding</th><th>Alert</th><th>Status</th><th class="hide">Note</th></tr></thead>
+      <thead><tr><th>Checked</th><th>Trading day</th><th class="n">Price</th><th class="n">Change</th><th class="n">New filings</th><th class="n">Shareholding</th><th>Alert</th><th>Status</th><th class="hide">Note</th></tr></thead>
       <tbody id="checks"></tbody>
     </table></div>
   </section>
