@@ -9,27 +9,5 @@
   "alert": "Yes",
   "status": "Setup",
   "note": "Initial load: last 10 announcements and the 23–26 Oct closes. Automatic daily checks start this evening."
- },
- {
-  "checked_at": "2026-10-27T14:38:00+08:00",
-  "trading_date": "2026-10-27",
-  "close": 4.16,
-  "change_pct": -0.0165,
-  "new_announcements": 20,
-  "new_shareholding": 14,
-  "alert": "Yes",
-  "status": "Intraday",
-  "note": "Last traded price at 14:38, not the official close. Backfilled 20 older filings listed on KLSE Screener (14 Sep – 6 Oct 2026), 14 of them shareholding changes; none new since 26 Oct."
- },
- {
-  "checked_at": "2026-10-27T15:38:00+08:00",
-  "trading_date": "2026-10-27",
-  "close": 4.16,
-  "change_pct": -0.0165,
-  "new_announcements": 0,
-  "new_shareholding": 0,
-  "alert": "No",
-  "status": "Intraday",
-  "note": "Last traded price at 15:38, not the official close."
  }
 ]
