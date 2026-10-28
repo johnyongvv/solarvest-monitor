@@ -116,7 +116,7 @@ a{color:var(--accent)}
   if (st && st.last_checked) {
     $('last').textContent = ts(st.last_checked);
     $('lastStatus').textContent = (has(st.last_price) ? 'Price RM' + rm(st.last_price) + ' ' + pct(st.last_price_change_pct) + ' · ' : '') + (st.result || '');
-    $('upd').textContent = 'Last checked ' + ts(st.last_checked) + ' (Malaysia time)';
+    $('upd').textContent = 'Last checked ' + ts(st.last_checked) + ' (Malaysia time) · this page refreshes itself every 5 minutes';
   }
   if (lc) {
     if (!(st && st.last_checked)) {
@@ -186,6 +186,14 @@ a{color:var(--accent)}
     box.append(svg);
   }
   draw(); let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 150); });
+})();
+// Auto-refresh: reload the latest data every 5 minutes while the page is open.
+(() => {
+  const EVERY = 5 * 60 * 1000;
+  let loadedAt = Date.now();
+  const maybeReload = () => { if (!document.hidden && Date.now() - loadedAt >= EVERY) location.reload(); };
+  setInterval(maybeReload, 30 * 1000);
+  document.addEventListener('visibilitychange', maybeReload);
 })();
 </script>
 </body>

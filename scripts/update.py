@@ -111,6 +111,10 @@ def fetch_announcements(today):
     return out
 
 
+def has(v):
+    return v is not None and v != ""
+
+
 def num(s):
     return float(s.replace(",", "").replace("+", ""))
 
@@ -187,6 +191,7 @@ def main():
                  and q["volume"] == latest["volume"] and q["price"] == latest["close"])
 
     price_row = check = None
+    pct_now = None
     if q and not stale:
         pct = round(q["change"] / q["prev_close"], 4) if q["prev_close"] else None
         if mode == "evening" and tstr not in {p["date"] for p in prices}:
@@ -195,7 +200,16 @@ def main():
                          "volume": q["volume"],
                          "alert": "Yes" if pct is not None and abs(pct) >= ALERT_PCT else "",
                          "basis": BASIS}
-        if mode == "intraday" and pct is not None and abs(pct) >= ALERT_PCT:
+        # Compare with the stored close of the latest earlier day when there is one.
+        base = next((r["close"] for r in reversed(prices) if r["date"] < tstr and has(r.get("close"))), None)
+        if mode == "intraday" and base:
+            pct = round((q["price"] - base) / base, 4)
+        # Avoid repeating an intraday alert row more than once an hour.
+        recent = any(c.get("trading_date") == tstr and str(c.get("status", "")).startswith("Intraday")
+                     and now - datetime.fromisoformat(c["checked_at"]) < timedelta(minutes=55)
+                     for c in checks)
+        pct_now = pct
+        if mode == "intraday" and pct is not None and abs(pct) >= ALERT_PCT and not recent:
             check = {"checked_at": now.isoformat(timespec="seconds"), "trading_date": tstr,
                      "close": q["price"], "change_pct": pct, "new_announcements": len(new),
                      "new_shareholding": n_sh, "alert": "Yes",
@@ -237,6 +251,27 @@ def main():
             save("prices", prices)
         if check:
             save("checks", checks)
+    if mode == "intraday":
+        if failed:
+            result = "Check incomplete: " + ", ".join(f.split(" (")[0] for f in failed) + " not read"
+        elif check:
+            result = "±5% move – alert"
+        elif q and pct_now is not None and abs(pct_now) >= ALERT_PCT:
+            result = "±5% move (alert already logged this hour)"
+        else:
+            result = "No ±5% move"
+        if not any(f.startswith("announcements") for f in failed):
+            result += "; " + (
+                f"{len(new)} new filing{'s' if len(new) != 1 else ''} ({n_sh} shareholding)" if new
+                else "no new filings")
+        status_obj = {"last_checked": now.isoformat(timespec="seconds"), "by": "Auto update (every 15 min)",
+                      "result": result, "last_price": q["price"] if q else None,
+                      "last_price_change_pct": pct_now if q else None}
+        print(json.dumps(status_obj, ensure_ascii=False))
+        if not dry:
+            (DATA / "status.json").write_text(json.dumps(status_obj, indent=1, ensure_ascii=False) + "\n",
+                                              encoding="utf-8")
+
     if failed and not (new or price_row or check):
         sys.exit(1)  # make total failures visible as a red run
 

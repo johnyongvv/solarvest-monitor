@@ -29,18 +29,21 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests==2.32.3 beautifulsoup4==4.12.3
-      - name: Run update
+      - name: Run update and push (retries if the Claude check pushed at the same time)
         env:
-          MODE: ${{ github.event_name == 'schedule' && (github.event.schedule == '37 11 * * 1-5' && 'evening' || 'intraday') || inputs.mode }}
+          MODE: ${{ github.event_name == 'schedule' && 'intraday' || inputs.mode }}
           DRY: ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
-        run: python scripts/update.py "$MODE" $DRY
-      - name: Commit changes
-        if: ${{ inputs.dry_run != 'true' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898469+github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
-          git commit -m "Auto update $(TZ=Asia/Kuala_Lumpur date '+%Y-%m-%d %H:%M') MYT"
-          git pull --rebase origin main
-          git push origin main
+          for attempt in 1 2 3; do
+            git fetch origin main && git reset --hard origin/main
+            python scripts/update.py "$MODE" $DRY
+            if [ -n "$DRY" ]; then exit 0; fi
+            git add data/
+            if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+            git commit -m "Auto update $(TZ=Asia/Kuala_Lumpur date '+%Y-%m-%d %H:%M') MYT"
+            if git push origin HEAD:main; then exit 0; fi
+            echo "Push rejected, retrying"; sleep 20
+          done
+          exit 1
