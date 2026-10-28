@@ -126,17 +126,28 @@ def fetch_price(ref_close=None):
     price = change = volume = None
     # Main quote: "<price> [arrow] <signed change> (<pct>%)"; take the first change+pct
     # and pick the preceding price that is consistent with it.
-    for cm in re.finditer(r"([+-]\d+\.\d{3}|0\.000)\s*\(\s*([+-]?\d+(?:\.\d+)?)\s*%\s*\)", text):
-        ch, pct = num(cm.group(1)), num(cm.group(2)) / 100
+    # The change may be shown unsigned (the direction is only a colour/arrow), so try both
+    # signs and keep the one whose implied previous close matches the stored one.
+    for cm in re.finditer(r"([+-]?\d+\.\d{3})\s*\(\s*([+-]?\d+(?:\.\d+)?)\s*%\s*\)", text):
+        raw, pct_raw = cm.group(1), cm.group(2)
+        signed = raw[0] in "+-" or pct_raw[0] in "+-"
+        ch_abs, pct_abs = abs(num(raw)), abs(num(pct_raw)) / 100
         window = text[max(0, cm.start() - 200):cm.start()]
         arrowed = re.findall(r"(?<![\d.+-])(\d+\.\d{3})\s*[↑↓▲▼]", window)
         before = re.findall(r"(?<![\d.+-])(\d+\.\d{3})(?![\d])", window)
-        # Prefer the price shown with an up/down arrow, then the nearest numbers.
         for cand in arrowed[-1:] + list(reversed(before[-6:])):
             p = num(cand)
-            prev = p - ch
-            if prev > 0 and abs(ch / prev - pct) <= 0.0006:
-                price, change = p, ch
+            if signed:
+                sign = -1 if (raw[0] == "-" or pct_raw[0] == "-") else 1
+                options = [sign * ch_abs]
+            else:
+                options = [ch_abs, -ch_abs]
+            fits = [ch for ch in options
+                    if p - ch > 0 and abs(abs(ch) / (p - ch) - pct_abs) <= 0.0006]
+            if not signed and ref_close:
+                fits = [ch for ch in fits if abs((p - ch) - ref_close) <= 0.0051]
+            if len(fits) == 1 or (fits and ch_abs == 0):
+                price, change = p, fits[0]
                 break
         if price is not None:
             break
@@ -181,7 +192,8 @@ def main():
 
     q = None
     try:
-        q = fetch_price(prices[-1]["close"] if prices else None)
+        q = fetch_price(next((r["close"] for r in reversed(prices)
+                             if r["date"] < tstr and has(r.get("close"))), None))
     except Exception as e:  # noqa: BLE001
         failed.append(f"price ({e})")
 
