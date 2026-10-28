@@ -9,5 +9,16 @@
   "alert": "Yes",
   "status": "Setup",
   "note": "Initial load: last 10 announcements and the 23–26 Oct closes. Automatic daily checks start this evening."
+ },
+ {
+  "checked_at": "2026-10-27T19:40:00+08:00",
+  "trading_date": "2026-10-27",
+  "close": 4.17,
+  "change_pct": -0.0142,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "No",
+  "status": "OK (corrected)",
+  "note": "No new filings. Close corrected on 28 Oct to RM4.17 (KLSE Screener live page); the evening check originally read RM4.16 from a mirror page that had stopped updating at about 2pm."
  }
 ]

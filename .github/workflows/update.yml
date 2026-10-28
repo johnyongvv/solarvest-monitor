@@ -1,9 +1,9 @@
 name: Update Solarvest monitor
 
+# Schedule turned off on 28 Oct 2026: the Claude scheduled tasks are the single updater
+# (they also keep the Claude dashboard in sync). Running both at :37 would write duplicate
+# rows and clash on pushes. This workflow can still be run manually from the Actions tab.
 on:
-  schedule:
-    - cron: "37 1-8 * * 1-5"   # hourly 9:37am-4:37pm MYT, Mon-Fri (intraday)
-    - cron: "37 11 * * 1-5"    # 7:37pm MYT, Mon-Fri (end of day)
   workflow_dispatch:
     inputs:
       mode:

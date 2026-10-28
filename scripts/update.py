@@ -21,7 +21,7 @@ MYT = timezone(timedelta(hours=8))
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 ANN_URL = "https://www.klsescreener.com/v2/announcements/stock/0215"
-PRICE_URL = "https://mobapp-bak.klsescreener.com/v2/stocks/view/0215"
+PRICE_URL = "https://www.klsescreener.com/v2/stocks/view/0215"
 VIEW_URL = "https://www.klsescreener.com/v2/announcements/view/{}"
 BASIS = "End-of-day; KLSE Screener; not an exchange-certified feed"
 ALERT_PCT = 0.05
