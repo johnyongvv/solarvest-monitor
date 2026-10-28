@@ -115,29 +115,37 @@ def num(s):
     return float(s.replace(",", "").replace("+", ""))
 
 
-def fetch_price():
+def fetch_price(ref_close=None):
     soup = get(PRICE_URL)
     tokens = [t.strip() for t in soup.stripped_strings if t.strip()]
+    text = " ".join(tokens)
     price = change = volume = None
-    for i, t in enumerate(tokens):
-        m = re.fullmatch(r"(\d+\.\d{3})\s*[↑↓▲▼]?", t)
-        if not m:
-            continue
-        for u in tokens[i + 1:i + 4]:
-            c = re.fullmatch(r"([+-]\d+\.\d{3}|0\.000)", u)
-            if c and abs(num(c.group(1))) < num(m.group(1)) * 0.5:
-                price, change = num(m.group(1)), num(c.group(1))
+    # Main quote: "<price> [arrow] <signed change> (<pct>%)"; take the first change+pct
+    # and pick the preceding price that is consistent with it.
+    for cm in re.finditer(r"([+-]\d+\.\d{3}|0\.000)\s*\(\s*([+-]?\d+(?:\.\d+)?)\s*%\s*\)", text):
+        ch, pct = num(cm.group(1)), num(cm.group(2)) / 100
+        window = text[max(0, cm.start() - 200):cm.start()]
+        arrowed = re.findall(r"(?<![\d.+-])(\d+\.\d{3})\s*[↑↓▲▼]", window)
+        before = re.findall(r"(?<![\d.+-])(\d+\.\d{3})(?![\d])", window)
+        # Prefer the price shown with an up/down arrow, then the nearest numbers.
+        for cand in arrowed[-1:] + list(reversed(before[-6:])):
+            p = num(cand)
+            prev = p - ch
+            if prev > 0 and abs(ch / prev - pct) <= 0.0006:
+                price, change = p, ch
                 break
         if price is not None:
             break
     for i, t in enumerate(tokens):
         if t.lower() == "volume" and i + 1 < len(tokens):
-            v = re.fullmatch(r"[\d,]+", tokens[i + 1])
-            if v:
+            if re.fullmatch(r"[\d,]+", tokens[i + 1]):
                 volume = int(tokens[i + 1].replace(",", ""))
                 break
-    if price is None or change is None or not (0 < price < 1000):
+    if price is None:
+        print("DEBUG numeric tokens:", [t for t in tokens if re.search(r"\d", t)][:40])
         raise RuntimeError("price not parsed from page")
+    if ref_close and not (0.6 * ref_close <= price <= 1.4 * ref_close):
+        raise RuntimeError(f"parsed price {price} implausible vs last close {ref_close}")
     return {"price": price, "change": change, "prev_close": round(price - change, 3),
             "volume": volume}
 
@@ -169,7 +177,7 @@ def main():
 
     q = None
     try:
-        q = fetch_price()
+        q = fetch_price(prices[-1]["close"] if prices else None)
     except Exception as e:  # noqa: BLE001
         failed.append(f"price ({e})")
 
