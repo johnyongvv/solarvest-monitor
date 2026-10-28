@@ -1,9 +1,14 @@
 name: Update Solarvest monitor
 
-# Schedule turned off on 28 Oct 2026: the Claude scheduled tasks are the single updater
-# (they also keep the Claude dashboard in sync). Running both at :37 would write duplicate
-# rows and clash on pushes. This workflow can still be run manually from the Actions tab.
+# Intraday updater for the public website, every 15 minutes on weekdays from 9:07am to 5:07pm MYT
+# (times below are UTC). It skips :37, when the Claude hourly check runs (that check also keeps the
+# Claude dashboard in sync). It writes data/status.json every run, adds new announcements, and adds a
+# check row only on a ±5% intraday move (at most once an hour). It never writes prices.
+# GitHub may start scheduled runs a few minutes late. It can also be run manually from the Actions tab.
 on:
+  schedule:
+    - cron: "7,22,52 1-8 * * 1-5"
+    - cron: "7 9 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
