@@ -84,9 +84,10 @@ def fetch_announcements(today):
         if (mon, day) > (today.month, today.day):
             year -= 1
         hh = int(tm.group(1)) % 12 + (12 if tm.group(3).lower() == "pm" else 0)
+        junk = re.compile(r"\d{1,2}|\d{1,2}:\d{2}|[ap]m|" + "|".join(MONTHS), re.I)
         rest = [t for t in tokens
                 if not DATE_RE.fullmatch(t) and not TIME_RE.fullmatch(t)
-                and "SOLARVEST HOLDINGS" not in t.upper()]
+                and not junk.fullmatch(t) and "SOLARVEST HOLDINGS" not in t.upper()]
         # Category is the short label before the title; title is the longest token.
         title_raw = max(rest, key=len) if rest else ""
         others = [t for t in rest if t != title_raw]
@@ -123,8 +124,8 @@ def fetch_price():
         if not m:
             continue
         for u in tokens[i + 1:i + 4]:
-            c = re.fullmatch(r"([+-]?\d+\.\d{3})", u)
-            if c:
+            c = re.fullmatch(r"([+-]\d+\.\d{3}|0\.000)", u)
+            if c and abs(num(c.group(1))) < num(m.group(1)) * 0.5:
                 price, change = num(m.group(1)), num(c.group(1))
                 break
         if price is not None:
