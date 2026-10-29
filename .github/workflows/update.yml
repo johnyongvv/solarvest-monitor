@@ -3,12 +3,15 @@ name: Update Solarvest monitor
 # Intraday updater for the public website, every 15 minutes on weekdays from 9:07am to 5:07pm MYT
 # (times below are UTC). It skips :37, when the Claude hourly check runs (that check also keeps the
 # Claude dashboard in sync). It writes data/status.json every run, adds new announcements, and adds a
-# check row only on a ±5% intraday move (at most once an hour). It never writes prices.
+# check row only on a ±5% intraday move (at most once an hour). Intraday runs never write prices;
+# the 5:45pm MYT run records the day's close only if it is still missing.
 # GitHub may start scheduled runs a few minutes late. It can also be run manually from the Actions tab.
 on:
   schedule:
     - cron: "7,22,52 1-8 * * 1-5"
     - cron: "7 9 * * 1-5"
+    # End-of-day backstop at 5:45pm MYT: records today's close if the Claude close check hasn't.
+    - cron: "45 9 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
@@ -36,7 +39,7 @@ jobs:
       - run: pip install requests==2.32.3 beautifulsoup4==4.12.3
       - name: Run update and push (retries if the Claude check pushed at the same time)
         env:
-          MODE: ${{ github.event_name == 'schedule' && 'intraday' || inputs.mode }}
+          MODE: ${{ github.event_name == 'schedule' && (github.event.schedule == '45 9 * * 1-5' && 'evening' || 'intraday') || inputs.mode }}
           DRY: ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
         run: |
           git config user.name "github-actions[bot]"

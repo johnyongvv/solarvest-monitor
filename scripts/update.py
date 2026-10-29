@@ -179,6 +179,11 @@ def main():
     anns, prices, checks = load("announcements"), load("prices"), load("checks")
     failed = []
 
+    # Evening backstop: if today's close is already recorded (by the Claude evening check), do nothing.
+    if mode == "evening" and tstr in {p["date"] for p in prices}:
+        print("Close for today already recorded - nothing to do")
+        return
+
     known = {r["id"] for r in anns}
     new = []
     try:
