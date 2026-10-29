@@ -28,5 +28,15 @@
   "volume": null,
   "alert": "",
   "basis": "End-of-day; previous close shown on KLSE Screener's live quote page on 28 Oct; not exchange-certified; volume not available"
+ },
+ {
+  "date": "2026-10-28",
+  "close": 4.22,
+  "prev_close": 4.17,
+  "change": 0.05,
+  "change_pct": 0.012,
+  "volume": 3071300,
+  "alert": "",
+  "basis": "End-of-day; KLSE Screener live quote page; not exchange-certified"
  }
 ]
