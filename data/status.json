@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-10-29T09:45:00+08:00",
- "by": "Hourly check",
- "result": "Price not read (quote page returned a stale snapshot); no new filings",
- "last_price": null,
- "last_price_change_pct": null
+ "last_checked": "2026-10-29T09:55:57+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "No ±5% move; no new filings",
+ "last_price": 4.21,
+ "last_price_change_pct": -0.0024
 }
