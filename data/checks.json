@@ -31,5 +31,16 @@
   "alert": "No",
   "status": "Partial – website push failed",
   "note": "1 new filing seen today: 2026-10-27 Changes in Sub. S-hldr's Int (Section 138 of CA 2016) – PRUDENTIAL PLC. First fetch of the quote page returned a stale snapshot (RM4.21, vol 146,600); re-fetch gave RM4.22, +0.05, vol 3,071,300, which was recorded. Website (GitHub) update could not be pushed: repository access denied for this run; dashboard updated only."
+ },
+ {
+  "checked_at": "2026-10-29T18:27:19+08:00",
+  "trading_date": "2026-10-29",
+  "close": 4.22,
+  "change_pct": 0.0,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "No",
+  "status": "OK",
+  "note": "No new filings."
  }
 ]
