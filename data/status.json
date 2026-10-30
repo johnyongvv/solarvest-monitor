@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-10-30T09:56:59+08:00",
- "by": "Auto update (every 15 min)",
- "result": "No ±5% move; no new filings",
- "last_price": 4.21,
- "last_price_change_pct": -0.0024
+ "last_checked": "2026-10-30T10:42:49+08:00",
+ "by": "Hourly check",
+ "result": "Check incomplete – KLSE Screener pages not reachable (price and filings not read)",
+ "last_price": null,
+ "last_price_change_pct": null
 }
