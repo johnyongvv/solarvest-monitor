@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-02T14:43:41+08:00",
- "by": "Hourly check",
- "result": "Check failed: announcements and price pages could not be fetched",
- "last_price": null,
- "last_price_change_pct": null
+ "last_checked": "2026-11-02T15:23:28+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "±5% move – alert; no new filings",
+ "last_price": 4.04,
+ "last_price_change_pct": -0.0626
 }
