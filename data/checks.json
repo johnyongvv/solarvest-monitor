@@ -53,5 +53,16 @@
   "alert": "No",
   "status": "OK",
   "note": "No new filings."
+ },
+ {
+  "checked_at": "2026-11-02T11:56:17+08:00",
+  "trading_date": "2026-11-02",
+  "close": 4.08,
+  "change_pct": -0.0534,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "Yes",
+  "status": "Intraday",
+  "note": "Last traded price at 11:56, not the official close."
  }
 ]
