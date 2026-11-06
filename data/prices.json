@@ -98,5 +98,15 @@
   "volume": 10706300,
   "alert": "",
   "basis": "End-of-day; KLSE Screener; not an exchange-certified feed"
+ },
+ {
+  "date": "2026-11-06",
+  "close": 4.11,
+  "prev_close": 4.08,
+  "change": 0.03,
+  "change_pct": 0.0074,
+  "volume": 5186400,
+  "alert": "",
+  "basis": "End-of-day; KLSE Screener; not an exchange-certified feed"
  }
 ]
