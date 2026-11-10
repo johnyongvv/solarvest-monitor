@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-10T14:42:27+08:00",
+ "last_checked": "2026-11-10T15:43:19+08:00",
  "by": "Hourly check",
- "result": "Price and filings not read (page fetch not permitted)",
+ "result": "Price and filings not read (page fetch failed)",
  "last_price": null,
  "last_price_change_pct": null
 }
