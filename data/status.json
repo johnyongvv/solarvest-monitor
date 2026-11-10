@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-09T16:40:00+08:00",
+ "last_checked": "2026-11-10T09:43:09+08:00",
  "by": "Hourly check",
- "result": "Market holiday – no check",
+ "result": "Check incomplete – announcements and price pages could not be fetched",
  "last_price": null,
  "last_price_change_pct": null
 }
