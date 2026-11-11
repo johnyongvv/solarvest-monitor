@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-11T14:43:31+08:00",
- "by": "Hourly check",
- "result": "Not checked – announcements and price pages could not be fetched (permission not granted)",
- "last_price": null,
- "last_price_change_pct": null
+ "last_checked": "2026-11-11T14:46:23+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "No ±5% move; no new filings",
+ "last_price": 4.09,
+ "last_price_change_pct": 0.0074
 }
