@@ -218,5 +218,16 @@
   "alert": "Yes",
   "status": "Intraday",
   "note": "Last traded price at 13:19, not the official close. New filings: 2026-11-17 MEMORANDUM OF UNDERSTANDING; 2026-11-17 General Announcement; 2026-11-17 Quarterly rpt on consolidated results for the financial period ended 30/09/2026."
+ },
+ {
+  "checked_at": "2026-11-17T14:21:59+08:00",
+  "trading_date": "2026-11-17",
+  "close": 3.5,
+  "change_pct": -0.1026,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "Yes",
+  "status": "Intraday",
+  "note": "Last traded price at 14:21, not the official close."
  }
 ]
