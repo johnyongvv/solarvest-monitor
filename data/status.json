@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-17T17:45:26+08:00",
+ "last_checked": "2026-11-17T18:04:38+08:00",
  "by": "Auto update (every 15 min)",
- "result": "±5% move – alert; no new filings",
+ "result": "±5% move (alert already logged this hour); no new filings",
  "last_price": 3.51,
  "last_price_change_pct": -0.1
 }
