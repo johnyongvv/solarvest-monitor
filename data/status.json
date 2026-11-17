@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-17T15:43:11+08:00",
- "by": "Hourly check",
- "result": "Price and filings not read (pages not reachable this run)",
- "last_price": null,
- "last_price_change_pct": null
+ "last_checked": "2026-11-17T15:47:00+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "±5% move – alert; no new filings",
+ "last_price": 3.45,
+ "last_price_change_pct": -0.1154
 }
