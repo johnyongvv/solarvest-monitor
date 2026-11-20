@@ -328,5 +328,16 @@
   "alert": "No",
   "status": "OK",
   "note": "No new filings."
+ },
+ {
+  "checked_at": "2026-11-20T18:40:51+08:00",
+  "trading_date": "2026-11-20",
+  "close": 3.58,
+  "change_pct": -0.0453,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "No",
+  "status": "OK",
+  "note": "No new filings."
  }
 ]
