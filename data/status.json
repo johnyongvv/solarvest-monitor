@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-23T10:17:13+08:00",
- "by": "Auto update (every 15 min)",
- "result": "±5% move – alert; no new filings",
- "last_price": 3.31,
- "last_price_change_pct": -0.0754
+ "last_checked": "2026-11-23T10:43:34+08:00",
+ "by": "Hourly check",
+ "result": "Price and filings not read (KLSE Screener fetch blocked)",
+ "last_price": null,
+ "last_price_change_pct": null
 }
