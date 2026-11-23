@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-23T16:43:12+08:00",
- "by": "Hourly check",
- "result": "Pages not fetched (web permission not granted) – announcements and price not read",
- "last_price": null,
- "last_price_change_pct": null
+ "last_checked": "2026-11-23T17:59:02+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "±5% move – alert; 1 new filing (1 shareholding)",
+ "last_price": 3.4,
+ "last_price_change_pct": -0.0503
 }

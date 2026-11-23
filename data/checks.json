@@ -394,5 +394,16 @@
   "alert": "Yes",
   "status": "Intraday",
   "note": "Last traded price at 14:57, not the official close."
+ },
+ {
+  "checked_at": "2026-11-23T17:59:02+08:00",
+  "trading_date": "2026-11-23",
+  "close": 3.4,
+  "change_pct": -0.0503,
+  "new_announcements": 1,
+  "new_shareholding": 1,
+  "alert": "Yes",
+  "status": "Intraday",
+  "note": "Last traded price at 17:59, not the official close. New filings: 2026-11-23 Changes in Sub. S-hldr's Int (Section 138 of CA 2016) – PRUDENTIAL PLC."
  }
 ]
