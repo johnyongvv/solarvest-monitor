@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-24T12:23:40+08:00",
- "by": "Auto update (every 15 min)",
- "result": "No ±5% move; 1 new filing (0 shareholding)",
- "last_price": 3.49,
- "last_price_change_pct": 0.0265
+ "last_checked": "2026-11-24T12:43:07+08:00",
+ "by": "Hourly check",
+ "result": "Check incomplete – KLSE Screener pages could not be fetched (fetch permission not granted); price and filings not read",
+ "last_price": null,
+ "last_price_change_pct": null
 }
