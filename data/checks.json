@@ -460,5 +460,16 @@
   "alert": "Yes",
   "status": "Intraday",
   "note": "Last traded price at 15:20, not the official close."
+ },
+ {
+  "checked_at": "2026-11-26T16:41:52+08:00",
+  "trading_date": "2026-11-26",
+  "close": 3.15,
+  "change_pct": -0.0735,
+  "new_announcements": 0,
+  "new_shareholding": 0,
+  "alert": "Yes",
+  "status": "Intraday",
+  "note": "Last traded price at 16:41, not the official close."
  }
 ]
