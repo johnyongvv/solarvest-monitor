@@ -1,7 +1,7 @@
 {
- "last_checked": "2026-11-26T16:43:00+08:00",
- "by": "Hourly check",
- "result": "Pages could not be fetched this run; last auto update (16:41) recorded ±5% move",
- "last_price": 3.15,
- "last_price_change_pct": -0.0735
+ "last_checked": "2026-11-26T17:51:29+08:00",
+ "by": "Auto update (every 15 min)",
+ "result": "±5% move – alert; no new filings",
+ "last_price": 3.1,
+ "last_price_change_pct": -0.0882
 }
