@@ -1,5 +1,5 @@
 {
- "last_checked": "2026-11-27T15:42:52+08:00",
+ "last_checked": "2026-11-27T16:43:20+08:00",
  "by": "Hourly check",
  "result": "Check incomplete: KLSE Screener pages could not be fetched (web fetch permission not granted); price and filings not read",
  "last_price": null,
